@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combate à Fome em Pernambuco</title>
+    <title>Combate à Fome em Pernambuco - Monitoramento</title>
     <style>
         * {
             margin: 0;
@@ -31,7 +31,9 @@
 
         .container {
             width: 600px;
-            height: 600px;
+            /* Alterado para auto para acomodar o novo conteúdo sem quebrar */
+            height: auto;
+            min-height: 750px; 
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -44,8 +46,79 @@
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            width: 100%;
         }
+
+        /* --- NOVOS ESTILOS PARA O GRÁFICO DE META --- */
+        .meta-container {
+            width: 100%;
+            background: #f0f4f8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e1e8ed;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #024796;
+            font-weight: bold;
+        }
+
+        .meta-countdown {
+            font-size: 12px;
+            color: #f83d03;
+            background: rgba(248, 61, 3, 0.1);
+            padding: 4px 8px;
+            border-radius: 10px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 24px;
+            background: #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f83d03, #ff9f43);
+            width: 0%; /* Será atualizado via JS */
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .progress-text {
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .meta-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .destaque-falta {
+            color: #f83d03;
+            font-weight: bold;
+        }
+        /* --- FIM DOS NOVOS ESTILOS --- */
 
         .logo {
             width: 150px;
@@ -69,7 +142,7 @@
             position: relative;
             width: 400px;
             height: 400px;
-            margin: 20px auto;
+            margin: 10px auto;
         }
 
         .prato {
@@ -168,7 +241,7 @@
 
         .detalhes {
             position: absolute;
-            top: 50%;
+            top: 55%; /* Ajuste fino devido à nova altura */
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
@@ -267,6 +340,7 @@
             text-align: center;
             animation: pulse 2s infinite;
             transition: opacity 0.4s;
+            width: 100%;
         }
 
         .instrucao.oculta {
@@ -323,6 +397,7 @@
             pointer-events: none;
             transition: opacity 0.4s;
             border-radius: 20px;
+            z-index: 90;
         }
 
         .overlay.ativo {
@@ -340,6 +415,26 @@
             <h1>Combate à Fome em Pernambuco</h1>
             <p class="subtitle">Programa Bom Prato - Resultados e Impacto</p>
         </div>
+
+        <!-- NOVA SEÇÃO DE META E PROGRESSO -->
+        <div class="meta-container">
+            <div class="meta-header">
+                <span>Meta 2025: 300 Cozinhas</span>
+                <span class="meta-countdown" id="countdown-text">Calculando...</span>
+            </div>
+            
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-bar">
+                    <span class="progress-text" id="progress-percent">0%</span>
+                </div>
+            </div>
+
+            <div class="meta-stats">
+                <span>Atuais: <strong id="lbl-atuais">0</strong></span>
+                <span class="destaque-falta">Faltam: <strong id="lbl-faltam">0</strong> para a meta</span>
+            </div>
+        </div>
+        <!-- FIM DA NOVA SEÇÃO -->
 
         <div class="prato-container">
             <div class="prato">
@@ -389,13 +484,21 @@
     </div>
 
     <script>
+        // --- CONFIGURAÇÃO CENTRAL ---
+        // Altere este número para atualizar todo o gráfico automaticamente
+        const configuracao = {
+            cozinhasAtuais: 243,
+            metaCozinhas: 300,
+            refeicoesMilhoes: 19
+        };
+
         const dados = {
             1: {
-                titulo: "243 Cozinhas Comunitárias",
+                titulo: `${configuracao.cozinhasAtuais} Cozinhas Comunitárias`,
                 conteudo: `
                     <div class="detalhes-item">
                         <div class="detalhes-label">📊 Evolução do Programa</div>
-                        O Programa Bom Prato conta atualmente com 243 cozinhas comunitárias integradas ao Estado, representando uma expansão significativa em relação às 33 unidades monitoradas no período do II PLANESAN (2016-2022).
+                        O Programa Bom Prato conta atualmente com ${configuracao.cozinhasAtuais} cozinhas comunitárias integradas ao Estado, representando uma expansão significativa em relação às 33 unidades monitoradas no período do II PLANESAN (2016-2022).
                     </div>
                     <div class="detalhes-item">
                         <div class="detalhes-label">🎯 Público Prioritário</div>
@@ -408,11 +511,11 @@
                 `
             },
             2: {
-                titulo: "19 Milhões de Refeições",
+                titulo: `${configuracao.refeicoesMilhoes} Milhões de Refeições`,
                 conteudo: `
                     <div class="detalhes-item">
                         <div class="detalhes-label">🍲 Volume de Atendimento</div>
-                        Mais de 19 milhões de refeições já foram servidas pelo Programa Bom Prato desde sua implementação.
+                        Mais de ${configuracao.refeicoesMilhoes} milhões de refeições já foram servidas pelo Programa Bom Prato desde sua implementação.
                     </div>
                     <div class="detalhes-item">
                         <div class="detalhes-label">📈 Comparativo Histórico</div>
@@ -469,6 +572,40 @@
         const btnReiniciar = document.getElementById('btn-reiniciar');
         const instrucao = document.getElementById('instrucao');
 
+        // --- FUNÇÕES DA NOVA BARRA DE PROGRESSO ---
+        function atualizarBarraProgresso() {
+            const atuais = configuracao.cozinhasAtuais;
+            const meta = configuracao.metaCozinhas;
+            const faltam = meta - atuais;
+            const porcentagem = Math.min((atuais / meta) * 100, 100).toFixed(0); // Limita a 100%
+
+            // Atualiza textos
+            document.getElementById('lbl-atuais').textContent = atuais;
+            document.getElementById('lbl-faltam').textContent = faltam > 0 ? faltam : 0;
+            document.getElementById('progress-percent').textContent = `${porcentagem}%`;
+
+            // Atualiza a largura visual
+            setTimeout(() => {
+                document.getElementById('progress-bar').style.width = `${porcentagem}%`;
+            }, 300);
+        }
+
+        function atualizarContadorDias() {
+            const hoje = new Date();
+            const fim2025 = new Date('2025-12-31T23:59:59');
+            
+            // Diferença em milissegundos
+            const diffTime = fim2025 - hoje;
+            // Converter para dias (arredondar para cima)
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            const textoContador = diffDays > 0 
+                ? `⌛ Faltam ${diffDays} dias para o fim de 2025` 
+                : "🎉 Prazo encerrado!";
+            
+            document.getElementById('countdown-text').textContent = textoContador;
+        }
+
         // Animar números iniciais
         function animateValue(id, end, duration) {
             const element = document.getElementById(id);
@@ -487,12 +624,20 @@
             }, stepTime);
         }
 
-        // Animar números ao carregar
-        setTimeout(() => {
-            animateValue('numero-1', 243, 2000);
-            animateValue('numero-2', 19, 1500);
-        }, 500);
+        // Inicialização
+        window.addEventListener('load', () => {
+            // Inicia funções do novo painel
+            atualizarBarraProgresso();
+            atualizarContadorDias();
 
+            // Animações originais (agora usando a configuração)
+            setTimeout(() => {
+                animateValue('numero-1', configuracao.cozinhasAtuais, 2000);
+                animateValue('numero-2', configuracao.refeicoesMilhoes, 1500);
+            }, 500);
+        });
+
+        // --- LÓGICA DE INTERAÇÃO DO PRATO (MANTIDA) ---
         fatias.forEach(fatia => {
             fatia.addEventListener('click', () => {
                 if (fatia.classList.contains('servida')) return;
@@ -554,8 +699,11 @@
             setTimeout(() => {
                 document.getElementById('numero-1').textContent = '0';
                 document.getElementById('numero-2').textContent = '0';
-                animateValue('numero-1', 243, 2000);
-                animateValue('numero-2', 19, 1500);
+                animateValue('numero-1', configuracao.cozinhasAtuais, 2000);
+                animateValue('numero-2', configuracao.refeicoesMilhoes, 1500);
+                // Reanimar barra de progresso também
+                document.getElementById('progress-bar').style.width = '0%';
+                setTimeout(() => atualizarBarraProgresso(), 500);
             }, 300);
         });
     </script>

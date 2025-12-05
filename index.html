@@ -31,7 +31,6 @@
 
         .container {
             width: 600px;
-            /* Alterado para auto para acomodar o novo conteúdo sem quebrar */
             height: auto;
             min-height: 750px; 
             background: white;
@@ -167,7 +166,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            /* Padding padrão removido em favor dos específicos abaixo */
             border: 2px solid rgba(255,255,255,0.3);
         }
 
@@ -182,11 +181,16 @@
             pointer-events: none;
         }
 
+        /* AJUSTE DE PADDING:
+           Empurra o conteúdo para longe da borda arredondada 
+           em direção ao centro do prato.
+        */
         .fatia-1 {
             top: 0;
             left: 0;
             background: linear-gradient(135deg, #024796 0%, #0366c9 100%);
             border-radius: 100% 0 0 0;
+            padding: 40px 10px 10px 40px; /* Top Right Bottom Left */
         }
 
         .fatia-2 {
@@ -194,6 +198,7 @@
             right: 0;
             background: linear-gradient(135deg, #f83d03 0%, #ff6b35 100%);
             border-radius: 0 100% 0 0;
+            padding: 40px 40px 10px 10px;
         }
 
         .fatia-3 {
@@ -201,6 +206,7 @@
             left: 0;
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             border-radius: 0 0 0 100%;
+            padding: 10px 10px 50px 50px; /* Mais padding embaixo e na esquerda */
         }
 
         .fatia-4 {
@@ -208,11 +214,12 @@
             right: 0;
             background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
             border-radius: 0 0 100% 0;
+            padding: 10px 50px 50px 10px; /* Mais padding embaixo e na direita */
         }
 
         .fatia-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 40px; /* Reduzi levemente para ajudar no encaixe */
+            margin-bottom: 5px;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
         }
 
@@ -222,14 +229,15 @@
             font-weight: bold;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .fatia-numero {
             color: white;
-            font-size: 32px;
+            font-size: 28px; /* Ajuste leve para caber melhor */
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.1;
         }
 
         .fatia-subtitulo {
@@ -241,7 +249,7 @@
 
         .detalhes {
             position: absolute;
-            top: 55%; /* Ajuste fino devido à nova altura */
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
@@ -331,15 +339,13 @@
         }
 
         .instrucao {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            /* Alterado de absolute bottom para relativo ao fluxo */
+            position: relative;
+            text-align: center;
             color: #666;
             font-size: 13px;
-            text-align: center;
             animation: pulse 2s infinite;
-            transition: opacity 0.4s;
+            margin-bottom: 5px; /* Espaço antes do prato */
             width: 100%;
         }
 
@@ -416,7 +422,7 @@
             <p class="subtitle">Programa Bom Prato - Resultados e Impacto</p>
         </div>
 
-        <!-- NOVA SEÇÃO DE META E PROGRESSO -->
+        <!-- SEÇÃO DE META E PROGRESSO -->
         <div class="meta-container">
             <div class="meta-header">
                 <span>Meta 2025: 300 Cozinhas</span>
@@ -434,7 +440,9 @@
                 <span class="destaque-falta">Faltam: <strong id="lbl-faltam">0</strong> para a meta</span>
             </div>
         </div>
-        <!-- FIM DA NOVA SEÇÃO -->
+
+        <!-- Instrução movida para cima do gráfico -->
+        <p class="instrucao" id="instrucao">👆 Clique em cada fatia para saber mais</p>
 
         <div class="prato-container">
             <div class="prato">
@@ -469,8 +477,6 @@
 
             <div class="garfo" id="garfo">🍴</div>
         </div>
-
-        <p class="instrucao" id="instrucao">👆 Clique em cada fatia para saber mais</p>
 
         <button class="btn-reiniciar" id="btn-reiniciar">🔄 Ver Novamente</button>
 
